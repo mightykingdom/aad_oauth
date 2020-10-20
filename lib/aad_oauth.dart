@@ -63,7 +63,7 @@ class AadOAuth {
     _token = await _authStorage.loadTokenToCache();
 
     //still have refresh token / try to get new access token with refresh token
-    if (_token.refreshToken != null)
+    if (_token != null && _token.refreshToken != null)
       await _performRefreshAuthFlow();
 
     // if we have no refresh token try to perform full request code oauth flow
@@ -94,7 +94,8 @@ class AadOAuth {
       try {
         _token = await _requestToken.requestRefreshToken(_token.refreshToken);
       } catch (e) {
-        //do nothing (because later we try to do a full oauth code flow request)
+        _token.refreshToken = null;
+        _token.accessToken = null;
       }
     }
   }
